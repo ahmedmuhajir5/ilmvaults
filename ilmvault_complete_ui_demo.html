@@ -1,0 +1,728 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --bg: #FDFAF4; --bg2: #FAF5E8; --card: #FFFFFF;
+    --border: #E4D9C2; --text: #1A1410; --muted: #9C8A70;
+    --sub: #5C4A32; --accent: #1B4332; --accent2: #2D7D56;
+    --gold: #C49A1A; --gold-bg: rgba(196,154,26,0.10);
+    --radius: 12px; --r-sm: 8px;
+    --ff-sans: 'Cormorant Garamond', Georgia, serif;
+    --ff-arabic: 'Amiri', serif;
+    --grade-sahih-bg: #E8F5EE; --grade-sahih: #1B4332;
+    --grade-hasan-bg: #FEF9E7; --grade-hasan: #7D5A00;
+  }
+  .dark-mode {
+    --bg: #0F1410; --bg2: #141A16; --card: #1A2210;
+    --border: #2A3828; --text: #F0EAD8; --muted: #6A7860;
+    --sub: #A89878; --accent: #4DA87C; --accent2: #68C496;
+    --gold: #D4AF37; --gold-bg: rgba(212,175,55,0.10);
+    --grade-sahih-bg: #1A3A2A; --grade-sahih: #68C496;
+    --grade-hasan-bg: #2A2000; --grade-hasan: #D4AF37;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #app {
+    font-family: var(--ff-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 600px;
+    transition: background .3s, color .3s;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  #nav {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 52px; position: sticky; top: 0; z-index: 10;
+    transition: background .3s, border-color .3s;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .nav-brand span { font-weight: 700; font-size: 1.2rem; color: var(--text); }
+  .nav-links { display: flex; gap: 2px; }
+  .nav-link {
+    padding: 5px 10px; border-radius: 6px; font-size: 0.875rem;
+    cursor: pointer; color: var(--sub); border: none; background: none;
+    font-family: var(--ff-sans); transition: color .2s, background .2s;
+  }
+  .nav-link:hover { color: var(--text); background: var(--bg2); }
+  .nav-link.active { color: var(--accent); }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+  #theme-btn {
+    width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+    background: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 15px; transition: border-color .2s;
+  }
+  #theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SCREENS */
+  .screen { display: none; animation: fadeIn .3s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  /* HOME */
+  #home-screen { padding: 32px 20px 40px; max-width: 680px; margin: 0 auto; }
+  .bismillah {
+    font-family: var(--ff-arabic); direction: rtl; text-align: center;
+    font-size: 1.6rem; color: var(--accent); opacity: .55; margin-bottom: 20px;
+  }
+  .home-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 8px; }
+  .home-title { font-size: 2.4rem; font-weight: 700; text-align: center; color: var(--text); }
+  .home-sub { text-align: center; color: var(--sub); font-size: 1.05rem; margin-bottom: 6px; }
+  .home-count { text-align: center; color: var(--muted); font-size: .875rem; margin-bottom: 24px; }
+
+  /* SEARCH BAR */
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .search-input {
+    width: 100%; height: 52px; padding: 0 48px 0 44px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    background: var(--card); color: var(--text);
+    font-family: var(--ff-sans); font-size: 1rem;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--gold-bg); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .search-btn {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    background: var(--accent); color: white; border: none; border-radius: 6px;
+    padding: 6px 14px; font-family: var(--ff-sans); font-size: .9rem;
+    cursor: pointer; font-weight: 600; transition: background .2s;
+  }
+  .search-btn:hover { background: var(--accent2); }
+  .quick-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 32px; }
+  .pill {
+    padding: 5px 12px; border: 1px solid var(--border); border-radius: 20px;
+    font-size: .85rem; cursor: pointer; color: var(--sub); background: none;
+    font-family: var(--ff-sans); transition: border-color .2s, color .2s, background .2s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--gold-bg); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 1.25rem; font-weight: 700; color: var(--text);
+    margin-bottom: 14px; text-align: center;
+  }
+
+  /* COLLECTION GRID */
+  .coll-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 28px; }
+  .coll-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px; cursor: pointer; transition: box-shadow .2s, transform .2s;
+    display: flex; flex-direction: column; gap: 4px;
+    animation: fadeIn .4s ease both;
+  }
+  .coll-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
+  .coll-arabic { font-family: var(--ff-arabic); direction: rtl; text-align: right; font-size: 1.45rem; line-height: 1.8; }
+  .coll-name { font-weight: 600; font-size: .95rem; color: var(--text); }
+  .coll-count { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+  .coll-bar { margin-top: 8px; height: 2px; border-radius: 1px; background: var(--border); overflow: hidden; }
+  .coll-fill { height: 100%; border-radius: 1px; }
+
+  /* DAILY HADITH */
+  .daily-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-top: 3px solid var(--gold); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 24px;
+  }
+  .daily-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--gold-bg); color: var(--gold);
+    font-size: .78rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
+  }
+  .hadith-arabic {
+    font-family: var(--ff-arabic); direction: rtl; text-align: right;
+    font-size: 1.5rem; line-height: 2.4; color: var(--text); margin-bottom: 12px;
+  }
+  .hadith-english { font-size: 1rem; line-height: 1.85; color: var(--sub); margin-bottom: 14px; }
+  .hadith-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .hadith-meta { font-size: .85rem; color: var(--muted); }
+  .grade-badge {
+    display: inline-flex; padding: 2px 8px; border-radius: 12px;
+    font-size: .78rem; font-weight: 600;
+  }
+  .grade-sahih { background: var(--grade-sahih-bg); color: var(--grade-sahih); }
+  .grade-hasan { background: var(--grade-hasan-bg); color: var(--grade-hasan); }
+
+  /* HADITH ACTIONS */
+  .hadith-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .act-btn {
+    display: flex; align-items: center; gap: 5px; padding: 6px 12px;
+    border: 1px solid var(--border); border-radius: 6px; background: none;
+    font-family: var(--ff-sans); font-size: .875rem; cursor: pointer;
+    color: var(--sub); transition: all .2s;
+  }
+  .act-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--gold-bg); }
+  .act-btn.bookmarked { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+
+  /* SEARCH SCREEN */
+  #search-screen { padding: 24px 20px; max-width: 680px; margin: 0 auto; }
+  .search-header { margin-bottom: 20px; }
+  .results-meta { font-size: .875rem; color: var(--muted); margin: 10px 0 16px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .filter-chip {
+    padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px;
+    font-size: .8rem; cursor: pointer; color: var(--sub); background: none;
+    font-family: var(--ff-sans); transition: all .2s;
+  }
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+  .result-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 10px; cursor: pointer;
+    transition: box-shadow .2s, transform .2s; animation: fadeIn .3s ease both;
+  }
+  .result-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); transform: translateY(-1px); }
+  .result-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .result-book { font-size: .78rem; padding: 2px 7px; border-radius: 4px; background: var(--bg2); color: var(--muted); }
+  .result-num { font-size: .78rem; color: var(--muted); }
+  .result-arabic { font-family: var(--ff-arabic); direction: rtl; text-align: right; font-size: 1.3rem; line-height: 2.2; margin-bottom: 8px; color: var(--text); }
+  .result-english { font-size: .95rem; line-height: 1.75; color: var(--sub); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+  mark { background: var(--gold-bg); color: var(--text); border-radius: 3px; padding: 0 2px; font-weight: 600; }
+
+  /* DETAIL SCREEN */
+  #detail-screen { padding: 20px; max-width: 680px; margin: 0 auto; }
+  .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); margin-bottom: 16px; flex-wrap: wrap; }
+  .bc-link { cursor: pointer; color: var(--muted); transition: color .2s; }
+  .bc-link:hover { color: var(--accent); }
+  .detail-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .detail-bar { height: 4px; }
+  .detail-body { padding: 24px; }
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .detail-book { font-size: .875rem; font-weight: 600; margin-bottom: 3px; }
+  .detail-num { font-size: 1.6rem; font-weight: 700; color: var(--text); }
+  .detail-book-arabic { font-family: var(--ff-arabic); font-size: 1.3rem; opacity: .4; direction: rtl; }
+  .divider-ornament { display: flex; align-items: center; gap: 10px; margin: 18px 0; }
+  .divider-ornament::before, .divider-ornament::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .ornament { color: var(--gold); font-size: 1rem; }
+  .arabic-block { background: var(--bg2); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+  .detail-arabic { font-family: var(--ff-arabic); direction: rtl; text-align: right; font-size: 1.7rem; line-height: 2.6; }
+  .detail-english { font-size: 1.05rem; line-height: 1.9; color: var(--text); margin-bottom: 18px; }
+  .meta-table { display: grid; grid-template-columns: 100px 1fr; gap: 6px 12px; font-size: .875rem; padding-top: 14px; border-top: 1px solid var(--border); }
+  .meta-key { color: var(--muted); }
+  .meta-val { color: var(--text); font-weight: 500; }
+  .detail-nav { display: flex; justify-content: space-between; margin-top: 16px; }
+  .nav-btn { padding: 7px 16px; border: 1px solid var(--border); border-radius: 6px; background: none; font-family: var(--ff-sans); font-size: .875rem; cursor: pointer; color: var(--sub); transition: all .2s; }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* BOOKMARKS */
+  #bm-screen { padding: 24px 20px; max-width: 680px; margin: 0 auto; }
+  .bm-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .bm-title-ar { font-family: var(--ff-arabic); opacity: .4; font-size: 1.2rem; }
+  .bm-title { font-size: 1.6rem; font-weight: 700; }
+  .bm-empty { text-align: center; padding: 60px 20px; }
+  .bm-empty-icon { font-size: 2rem; opacity: .2; margin-bottom: 12px; }
+  .bm-empty-text { color: var(--muted); font-size: 1rem; }
+  .bm-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; gap: 12px; animation: fadeIn .3s ease both; }
+  .bm-card-left { flex: 1; min-width: 0; }
+  .bm-remove { background: none; border: none; cursor: pointer; color: var(--muted); padding: 4px; border-radius: 4px; transition: color .2s; flex-shrink: 0; }
+  .bm-remove:hover { color: #c0392b; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: var(--accent); color: white; padding: 8px 18px;
+    border-radius: 20px; font-size: .875rem; font-weight: 500;
+    transition: transform .3s; z-index: 100; pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* FOOTER */
+  #footer {
+    border-top: 1px solid var(--border); background: var(--bg2);
+    text-align: center; padding: 20px; font-size: .8rem; color: var(--muted);
+    margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .footer-arabic { font-family: var(--ff-arabic); font-size: 1rem; opacity: .4; }
+</style>
+
+<div id="app">
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-brand" onclick="showScreen('home')">
+      <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="29" stroke="currentColor" stroke-width="2.5" fill="none" opacity=".25"/>
+        <circle cx="32" cy="32" r="18" stroke="currentColor" stroke-width="2" fill="none" opacity=".4"/>
+        <line x1="32" y1="14" x2="32" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="32" y1="42" x2="32" y2="50" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="14" y1="32" x2="22" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="42" y1="32" x2="50" y2="32" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="20" y1="20" x2="25" y2="25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="39" y1="39" x2="44" y2="44" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="44" y1="20" x2="39" y2="25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="25" y1="39" x2="20" y2="44" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M35 26.5C33.2 27.3 32 29 32 31C32 34 34.5 36.5 37.5 36.5C38 36.5 38.5 36.4 39 36.3C38 38.3 35.8 39.8 33.4 39.8C29.8 39.8 26.8 36.8 26.8 33.2C26.8 29.5 29.8 26.5 33.4 26.5C34 26.5 34.5 26.6 35 26.7Z" fill="currentColor"/>
+      </svg>
+      <span>IlmVault</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-link active" id="nl-home" onclick="showScreen('home')">Home</button>
+      <button class="nav-link" id="nl-search" onclick="showScreen('search')">Search</button>
+      <button class="nav-link" id="nl-bm" onclick="showScreen('bookmarks')">Bookmarks</button>
+    </div>
+    <div class="nav-right">
+      <button id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">◐</button>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen active">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+    <div class="home-logo">
+      <svg width="56" height="56" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="29" stroke="var(--accent)" stroke-width="2.5" fill="var(--bg2)"/>
+        <circle cx="32" cy="32" r="18" stroke="var(--accent)" stroke-width="2" fill="none"/>
+        <line x1="32" y1="14" x2="32" y2="22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="32" y1="42" x2="32" y2="50" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="14" y1="32" x2="22" y2="32" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="42" y1="32" x2="50" y2="32" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="20" y1="20" x2="25" y2="25" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="39" y1="39" x2="44" y2="44" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="44" y1="20" x2="39" y2="25" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="25" y1="39" x2="20" y2="44" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M35 26.5C33.2 27.3 32 29 32 31C32 34 34.5 36.5 37.5 36.5C38 36.5 38.5 36.4 39 36.3C38 38.3 35.8 39.8 33.4 39.8C29.8 39.8 26.8 36.8 26.8 33.2C26.8 29.5 29.8 26.5 33.4 26.5C34 26.5 34.5 26.6 35 26.7Z" fill="var(--accent)"/>
+        <circle cx="32" cy="32" r="2.5" fill="var(--gold)"/>
+      </svg>
+    </div>
+
+    <h1 class="home-title">IlmVault</h1>
+    <p class="home-sub">The Modern Islamic Knowledge Library</p>
+    <p class="home-count">40,000+ authenticated hadiths from 7 major collections</p>
+
+    <div class="search-wrap">
+      <span class="search-icon">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </span>
+      <input type="text" class="search-input" id="home-search" placeholder="Search hadiths, topics, narrators…" onkeydown="if(event.key==='Enter') doSearch()" />
+      <button class="search-btn" onclick="doSearch()">Search</button>
+    </div>
+
+    <div class="quick-links">
+      <button class="pill" onclick="searchFor('intention')">Intention</button>
+      <button class="pill" onclick="searchFor('prayer')">Prayer</button>
+      <button class="pill" onclick="searchFor('fasting')">Fasting</button>
+      <button class="pill" onclick="searchFor('charity')">Charity</button>
+      <button class="pill" onclick="searchFor('knowledge')">Knowledge</button>
+      <button class="pill" onclick="searchFor('patience')">Patience</button>
+    </div>
+
+    <p class="section-label">Hadith Collections</p>
+    <div class="coll-grid" id="coll-grid"></div>
+
+    <p class="section-label" style="margin-top:8px">Hadith of the Day</p>
+    <div class="daily-card" id="daily-card"></div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="search-screen" class="screen">
+    <div class="search-header">
+      <div class="search-wrap">
+        <span class="search-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </span>
+        <input type="text" class="search-input" id="main-search" placeholder="Search hadiths…" onkeydown="if(event.key==='Enter') runSearch()" />
+        <button class="search-btn" onclick="runSearch()">Search</button>
+      </div>
+      <div id="results-meta" class="results-meta"></div>
+      <div class="filter-row" id="grade-filters">
+        <button class="filter-chip active" onclick="setGradeFilter('')">All grades</button>
+        <button class="filter-chip" onclick="setGradeFilter('sahih')">Sahih</button>
+        <button class="filter-chip" onclick="setGradeFilter('hasan')">Hasan</button>
+      </div>
+      <div class="filter-row" id="book-filters">
+        <button class="filter-chip active" onclick="setBookFilter('')">All books</button>
+        <button class="filter-chip" onclick="setBookFilter('bukhari')">Bukhari</button>
+        <button class="filter-chip" onclick="setBookFilter('muslim')">Muslim</button>
+        <button class="filter-chip" onclick="setBookFilter('tirmidhi')">Tirmidhi</button>
+      </div>
+    </div>
+    <div id="results-list"></div>
+  </div>
+
+  <!-- DETAIL -->
+  <div id="detail-screen" class="screen">
+    <div class="breadcrumb" id="bc"></div>
+    <div id="detail-content"></div>
+  </div>
+
+  <!-- BOOKMARKS -->
+  <div id="bm-screen" class="screen">
+    <div class="bm-header">
+      <div>
+        <div class="bm-title-ar">المحفوظات</div>
+        <div class="bm-title">My Bookmarks</div>
+      </div>
+      <button class="act-btn" onclick="clearBookmarks()" id="clear-btn" style="display:none">Clear all</button>
+    </div>
+    <div id="bm-list"></div>
+  </div>
+
+  <div id="footer">
+    <div>© 2025 IlmVault · Built for the Muslim Ummah</div>
+    <div class="footer-arabic">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div>
+  </div>
+</div>
+
+<div id="toast">Copied!</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const books = [
+  { slug:'bukhari',  name:"Sahih al-Bukhari",  arabic:"صحيح البخاري",  author:"Imam al-Bukhari",  count:7563, color:"#1B4332" },
+  { slug:'muslim',   name:"Sahih Muslim",       arabic:"صحيح مسلم",     author:"Imam Muslim",      count:7500, color:"#1e3a5f" },
+  { slug:'abudawud', name:"Sunan Abu Dawud",    arabic:"سنن أبي داود",   author:"Imam Abu Dawud",   count:5274, color:"#3d1f00" },
+  { slug:'tirmidhi', name:"Jami' at-Tirmidhi",  arabic:"جامع الترمذي",  author:"Imam at-Tirmidhi", count:3956, color:"#2d1b69" },
+  { slug:'nasai',    name:"Sunan an-Nasa'i",    arabic:"سنن النسائي",   author:"Imam an-Nasa'i",   count:5758, color:"#1a3a2a" },
+  { slug:'ibnmajah', name:"Sunan Ibn Majah",    arabic:"سنن ابن ماجه",  author:"Imam Ibn Majah",   count:4341, color:"#4a1942" },
+  { slug:'malik',    name:"Muwatta Malik",      arabic:"موطأ مالك",     author:"Imam Malik",       count:1720, color:"#2c3e50" },
+];
+
+const hadiths = [
+  { id:1, book:"bukhari", bookName:"Sahih al-Bukhari", chapter:"Revelation", num:"1", arabic:"إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى", english:"The reward of deeds depends upon the intentions and every person will get the reward according to what he has intended. So whoever emigrated for worldly benefits or for a woman to marry, his emigration is for what he emigrated for.", narrator:"Umar ibn al-Khattab (رضي الله عنه)", grade:"sahih", ref:"Sahih al-Bukhari 1" },
+  { id:2, book:"bukhari", bookName:"Sahih al-Bukhari", chapter:"Belief (Iman)", num:"8", arabic:"الإِسْلاَمُ أَنْ تَشْهَدَ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ وَتُقِيمَ الصَّلاَةَ وَتُؤْتِيَ الزَّكَاةَ", english:"Islam is to testify that there is no god but Allah and Muhammad is the Messenger of Allah, to perform the prayers, to pay the zakat, to fast in Ramadan, and to make the pilgrimage to the House if you are able to do so.", narrator:"Abdullah ibn Umar (رضي الله عنه)", grade:"sahih", ref:"Sahih al-Bukhari 8" },
+  { id:3, book:"bukhari", bookName:"Sahih al-Bukhari", chapter:"Belief (Iman)", num:"11", arabic:"لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ", english:"None of you will have faith till he wishes for his (Muslim) brother what he likes for himself.", narrator:"Anas ibn Malik (رضي الله عنه)", grade:"sahih", ref:"Sahih al-Bukhari 11" },
+  { id:4, book:"bukhari", bookName:"Sahih al-Bukhari", chapter:"Knowledge", num:"71", arabic:"مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ", english:"If Allah wants to do good to a person, He makes him comprehend the religion.", narrator:"Muawiyah (رضي الله عنه)", grade:"sahih", ref:"Sahih al-Bukhari 71" },
+  { id:5, book:"muslim", bookName:"Sahih Muslim", chapter:"Faith", num:"145", arabic:"إِنَّ الإِسْلاَمَ بَدَأَ غَرِيبًا وَسَيَعُودُ غَرِيبًا كَمَا بَدَأَ فَطُوبَى لِلْغُرَبَاءِ", english:"Islam initiated as something strange, and it will revert to its (old position) of being strange. So glad tidings for the strangers.", narrator:"Abu Huraira (رضي الله عنه)", grade:"sahih", ref:"Sahih Muslim 145" },
+  { id:6, book:"tirmidhi", bookName:"Jami' at-Tirmidhi", chapter:"Zuhd", num:"2324", arabic:"الدُّنْيَا سِجْنُ الْمُؤْمِنِ وَجَنَّةُ الْكَافِرِ", english:"The world is a prison for the believer and a paradise for the disbeliever.", narrator:"Abu Huraira (رضي الله عنه)", grade:"sahih", ref:"Jami at-Tirmidhi 2324" },
+  { id:7, book:"malik", bookName:"Muwatta Malik", chapter:"General", num:"1628", arabic:"تَرَكْتُ فِيكُمْ أَمْرَيْنِ لَنْ تَضِلُّوا مَا تَمَسَّكْتُمْ بِهِمَا كِتَابَ اللَّهِ وَسُنَّةَ نَبِيِّهِ", english:"I have left two matters with you. As long as you hold to them, you will not go the wrong way. They are the Book of Allah and the Sunna of His Prophet.", narrator:"Malik ibn Anas", grade:"sahih", ref:"Muwatta Malik 1628" },
+  { id:8, book:"bukhari", bookName:"Sahih al-Bukhari", chapter:"Prayer", num:"520", arabic:"بُنِيَ الإِسْلاَمُ عَلَى خَمْسٍ شَهَادَةِ أَنْ لاَ إِلَهَ إِلاَّ اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ وَإِقَامِ الصَّلاَةِ وَإِيتَاءِ الزَّكَاةِ وَالْحَجِّ وَصَوْمِ رَمَضَانَ", english:"Islam is based on five pillars: Testifying that there is no god but Allah and that Muhammad is His Messenger, establishing the Prayer, paying the Zakat, performing the Hajj, and fasting in Ramadan.", narrator:"Ibn Umar (رضي الله عنه)", grade:"sahih", ref:"Sahih al-Bukhari 520" },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let dark = false;
+let bookmarks = JSON.parse(localStorage.getItem('iv_bm') || '[]');
+let activeGrade = '', activeBook = '', currentScreen = 'home';
+
+function saveBM() { localStorage.setItem('iv_bm', JSON.stringify(bookmarks)); }
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name + '-screen').classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = { home:'nl-home', search:'nl-search', bookmarks:'nl-bm' };
+  if (map[name]) document.getElementById(map[name]).classList.add('active');
+  currentScreen = name;
+  if (name === 'bookmarks') renderBookmarks();
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  dark = !dark;
+  document.getElementById('app').classList.toggle('dark-mode', dark);
+  document.getElementById('theme-btn').textContent = dark ? '○' : '◐';
+}
+
+// ── HOME RENDER ───────────────────────────────────────────────────────────────
+function renderHome() {
+  // Collection grid
+  const grid = document.getElementById('coll-grid');
+  grid.innerHTML = books.map(b => `
+    <div class="coll-card" onclick="viewBook('${b.slug}')" style="border-top:3px solid ${b.color}">
+      <div class="coll-arabic" style="color:${b.color}">${b.arabic}</div>
+      <div class="coll-name">${b.name}</div>
+      <div class="coll-count">${b.count.toLocaleString()} hadiths · ${b.author}</div>
+      <div class="coll-bar"><div class="coll-fill" style="width:${Math.round(b.count/75.63)}%;background:${b.color}"></div></div>
+    </div>`).join('');
+
+  // Daily hadith (hadith #1)
+  const h = hadiths[0];
+  document.getElementById('daily-card').innerHTML = `
+    <div class="daily-tag">✦ Hadith of the Day</div>
+    <span class="grade-badge grade-${h.grade}" style="margin-bottom:10px;display:inline-block">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span>
+    <div class="hadith-arabic">${h.arabic}</div>
+    <div class="hadith-english">${h.english}</div>
+    <div class="hadith-footer">
+      <div>
+        <div class="hadith-meta">Narrated by ${h.narrator}</div>
+        <div class="hadith-meta">${h.ref}</div>
+      </div>
+      <button class="act-btn" onclick="viewHadith(${h.id})">Full Hadith →</button>
+    </div>
+    <div class="hadith-actions">
+      <button class="act-btn" onclick="copyHadith(${h.id})">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copy
+      </button>
+      <button class="act-btn" onclick="toggleBM(${h.id}, this)" id="bm-daily">${bmBtn(h.id)}</button>
+    </div>`;
+}
+
+function bmBtn(id) {
+  const on = bookmarks.includes(id);
+  return `<svg width="13" height="13" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> ${on ? 'Saved' : 'Bookmark'}`;
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+function doSearch() {
+  const q = document.getElementById('home-search').value.trim();
+  if (!q) return;
+  showScreen('search');
+  document.getElementById('main-search').value = q;
+  activeGrade = ''; activeBook = '';
+  syncFilters();
+  renderResults(q);
+}
+
+function searchFor(kw) {
+  document.getElementById('home-search').value = kw;
+  doSearch();
+}
+
+function runSearch() {
+  const q = document.getElementById('main-search').value.trim();
+  if (!q) return;
+  activeGrade = ''; activeBook = '';
+  syncFilters();
+  renderResults(q);
+}
+
+function setGradeFilter(g) {
+  activeGrade = g;
+  syncFilters();
+  const q = document.getElementById('main-search').value;
+  if (q) renderResults(q);
+}
+
+function setBookFilter(b) {
+  activeBook = b;
+  syncFilters();
+  const q = document.getElementById('main-search').value;
+  if (q) renderResults(q);
+}
+
+function syncFilters() {
+  document.querySelectorAll('#grade-filters .filter-chip').forEach((c,i) => {
+    const grades = ['', 'sahih', 'hasan'];
+    c.classList.toggle('active', grades[i] === activeGrade);
+  });
+  document.querySelectorAll('#book-filters .filter-chip').forEach((c,i) => {
+    const bks = ['', 'bukhari', 'muslim', 'tirmidhi'];
+    c.classList.toggle('active', bks[i] === activeBook);
+  });
+}
+
+function hl(text, q) {
+  if (!q) return text;
+  const words = q.trim().split(/\s+/).filter(w => w.length > 2);
+  if (!words.length) return text;
+  const rx = new RegExp('(' + words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|') + ')', 'gi');
+  return text.replace(rx, '<mark>$1</mark>');
+}
+
+function renderResults(q) {
+  const lower = q.toLowerCase();
+  let results = hadiths.filter(h => {
+    if (activeGrade && h.grade !== activeGrade) return false;
+    if (activeBook && h.book !== activeBook) return false;
+    return h.english.toLowerCase().includes(lower) || h.narrator.toLowerCase().includes(lower) || h.num === q;
+  });
+
+  const meta = document.getElementById('results-meta');
+  meta.textContent = results.length > 0
+    ? `${results.length} result${results.length !== 1 ? 's' : ''} for "${q}"`
+    : `No results for "${q}"`;
+
+  const list = document.getElementById('results-list');
+  if (!results.length) {
+    list.innerHTML = `<div style="text-align:center;padding:40px 20px;color:var(--muted)">
+      <div style="font-family:var(--ff-arabic);font-size:2rem;opacity:.25;margin-bottom:8px">لا نتيجة</div>
+      Try different keywords or browse a collection
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = results.map(h => `
+    <div class="result-card" onclick="viewHadith(${h.id})">
+      <div class="result-meta">
+        <span class="result-book">${h.bookName}</span>
+        <span style="color:var(--border)">·</span>
+        <span class="result-num">#${h.num}</span>
+        <span style="color:var(--border)">·</span>
+        <span class="result-num">${h.chapter}</span>
+        <span class="grade-badge grade-${h.grade}">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span>
+      </div>
+      <div class="result-arabic">${h.arabic}</div>
+      <div class="result-english">${hl(h.english, q)}</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-top:8px">Narrated by ${h.narrator}</div>
+    </div>`).join('');
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────────────
+function viewHadith(id) {
+  const h = hadiths.find(x => x.id === id);
+  if (!h) return;
+  const bk = books.find(b => b.slug === h.book);
+  const isBM = bookmarks.includes(id);
+
+  document.getElementById('bc').innerHTML = `
+    <span class="bc-link" onclick="showScreen('home')">Home</span> /
+    <span class="bc-link" onclick="showScreen('search')">Collections</span> /
+    <span style="color:var(--text)">${h.bookName}</span> /
+    <span style="color:var(--text)">#${h.num}</span>`;
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-card">
+      <div class="detail-bar" style="background:${bk?.color||'var(--accent)'}"></div>
+      <div class="detail-body">
+        <div class="detail-header">
+          <div>
+            <div class="detail-book" style="color:${bk?.color||'var(--accent)'}">${h.bookName} · ${h.chapter}</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+              <div class="detail-num">Hadith #${h.num}</div>
+              <span class="grade-badge grade-${h.grade}">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span>
+            </div>
+          </div>
+          <div class="detail-book-arabic">${bk?.arabic||''}</div>
+        </div>
+        <div class="divider-ornament"><span class="ornament">✦</span></div>
+        <div class="arabic-block">
+          <div class="detail-arabic">${h.arabic}</div>
+        </div>
+        <div class="detail-english">${h.english}</div>
+        <div class="meta-table">
+          <span class="meta-key">Narrated by</span><span class="meta-val">${h.narrator}</span>
+          <span class="meta-key">Grade</span><span class="meta-val"><span class="grade-badge grade-${h.grade}">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span></span>
+          <span class="meta-key">Reference</span><span class="meta-val">${h.ref}</span>
+        </div>
+        <div class="hadith-actions">
+          <button class="act-btn" onclick="copyHadith(${id})">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1 2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+          <button class="act-btn" onclick="shareHadith(${id})">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </button>
+          <button class="act-btn ${isBM?'bookmarked':''}" id="bm-detail-${id}" onclick="toggleBM(${id}, this)">
+            <svg width="13" height="13" fill="${isBM?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            ${isBM ? 'Saved' : 'Bookmark'}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="detail-nav">
+      <button class="nav-btn" onclick="viewHadith(${id > 1 ? id-1 : hadiths.length})">← Previous</button>
+      <button class="nav-btn" onclick="viewHadith(${id < hadiths.length ? id+1 : 1})">Next →</button>
+    </div>`;
+
+  showScreen('detail');
+}
+
+function viewBook(slug) {
+  document.getElementById('home-search').value = '';
+  document.getElementById('main-search').value = '';
+  showScreen('search');
+  activeBook = slug; activeGrade = '';
+  syncFilters();
+  const bk = books.find(b => b.slug === slug);
+  document.getElementById('main-search').value = '';
+  document.getElementById('results-meta').textContent = `Showing hadiths from ${bk?.name}`;
+  const results = hadiths.filter(h => h.book === slug);
+  document.getElementById('results-list').innerHTML = results.map(h => `
+    <div class="result-card" onclick="viewHadith(${h.id})">
+      <div class="result-meta">
+        <span class="result-num">#${h.num}</span>
+        <span style="color:var(--border)">·</span>
+        <span class="result-num">${h.chapter}</span>
+        <span class="grade-badge grade-${h.grade}">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span>
+      </div>
+      <div class="result-arabic">${h.arabic}</div>
+      <div class="result-english">${h.english.slice(0,120)}…</div>
+    </div>`).join('');
+}
+
+// ── BOOKMARKS ─────────────────────────────────────────────────────────────────
+function toggleBM(id, btn) {
+  const on = bookmarks.includes(id);
+  if (on) { bookmarks = bookmarks.filter(x => x !== id); }
+  else { bookmarks.push(id); }
+  saveBM();
+  if (btn) {
+    btn.classList.toggle('bookmarked', !on);
+    btn.innerHTML = `<svg width="13" height="13" fill="${!on?'currentColor':'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> ${!on ? 'Saved' : 'Bookmark'}`;
+  }
+  showToast(!on ? 'Bookmarked!' : 'Removed');
+}
+
+function renderBookmarks() {
+  const list = document.getElementById('bm-list');
+  const clearBtn = document.getElementById('clear-btn');
+  if (!bookmarks.length) {
+    clearBtn.style.display = 'none';
+    list.innerHTML = `<div class="bm-empty">
+      <div class="bm-empty-icon">🔖</div>
+      <div class="bm-empty-text">No bookmarks yet<br><small>Save hadiths while reading</small></div>
+      <button class="act-btn" style="margin:16px auto" onclick="showScreen('home')">Browse hadiths</button>
+    </div>`;
+    return;
+  }
+  clearBtn.style.display = '';
+  const bms = hadiths.filter(h => bookmarks.includes(h.id));
+  list.innerHTML = bms.map(h => `
+    <div class="bm-card">
+      <div class="bm-card-left">
+        <div class="result-meta">
+          <span class="result-book">${h.bookName} #${h.num}</span>
+          <span class="grade-badge grade-${h.grade}">${h.grade.charAt(0).toUpperCase()+h.grade.slice(1)}</span>
+        </div>
+        <div class="result-arabic" style="font-size:1.15rem;margin:6px 0 4px">${h.arabic.slice(0,80)}…</div>
+        <div style="font-size:.85rem;color:var(--sub)">${h.english.slice(0,100)}…</div>
+        <button class="act-btn" style="margin-top:8px" onclick="viewHadith(${h.id})">Read →</button>
+      </div>
+      <button class="bm-remove" onclick="removeBM(${h.id})" title="Remove">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="m19 6-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+function removeBM(id) {
+  bookmarks = bookmarks.filter(x => x !== id);
+  saveBM();
+  renderBookmarks();
+  showToast('Removed');
+}
+
+function clearBookmarks() {
+  bookmarks = [];
+  saveBM();
+  renderBookmarks();
+  showToast('Cleared');
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
+function copyHadith(id) {
+  const h = hadiths.find(x => x.id === id);
+  if (!h) return;
+  const text = `${h.arabic}\n\n${h.english}\n\n— Narrated by ${h.narrator}. ${h.ref}`;
+  navigator.clipboard?.writeText(text).catch(()=>{});
+  showToast('Copied to clipboard!');
+}
+
+function shareHadith(id) {
+  const h = hadiths.find(x => x.id === id);
+  if (!h) return;
+  navigator.clipboard?.writeText(`${h.english}\n— ${h.ref}`).catch(()=>{});
+  showToast('Link copied!');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderHome();
+</script>
